@@ -1,3 +1,4 @@
+import CornerDecor from '../components/CornerDecor';
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { submitDonation } from '../firebase/firestore';
@@ -79,32 +80,47 @@ export default function DonorNiyyah() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-12 w-full max-w-md text-center">
+    <div className="min-h-screen islamic-bg flex items-center justify-center p-4 py-10">
+      <div className="w-full max-w-md">
 
-        {/* Arabic ayah */}
-        <div className="mb-10">
+        <div className="islamic-card px-8 py-10 text-center">
+          <CornerDecor color="#1a5c38" size={72} inset={4} />
+
+        {/* Ornamental top */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <span className="h-px flex-1 bg-gold opacity-30" />
+          <span className="text-gold text-xl">✦</span>
+          <span className="h-px flex-1 bg-gold opacity-30" />
+        </div>
+
+        {/* Arabic ayah — beautiful Amiri treatment */}
+        <div className="mb-8">
           <p
-            className="text-4xl text-gray-800 leading-loose mb-4"
+            className="font-amiri leading-loose mb-3"
             dir="rtl"
             lang="ar"
-            style={{ fontFamily: 'Georgia, serif' }}
+            style={{ fontSize: '2.2rem', color: '#1a5c38' }}
           >
             إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ
           </p>
-          <p className="text-green-800 font-semibold text-lg italic">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="h-px w-8 bg-gold opacity-40" />
+            <span className="text-gold text-xs">❖</span>
+            <span className="h-px w-8 bg-gold opacity-40" />
+          </div>
+          <p className="font-amiri text-gold font-semibold text-lg italic">
             "Actions are judged by intentions."
           </p>
         </div>
 
         {/* Body text */}
-        <p className="text-gray-500 leading-relaxed text-base mb-10 max-w-sm mx-auto">
+        <p className="text-gray-500 leading-relaxed text-base mb-8 max-w-sm mx-auto">
           Before you give, take a moment. You are giving for the sake of Allah alone — not to be
           seen, not to be praised. Your sadaqah is between you and Allah.
         </p>
 
         {/* Donation summary */}
-        <div className="bg-green-50 rounded-2xl p-5 mb-10 text-left space-y-3">
+        <div className="rounded-2xl p-5 mb-8 text-left space-y-3" style={{ background: '#f0f9f4', border: '1px solid #a7d5bc' }}>
           <div className="flex justify-between text-sm">
             <span className="text-gray-500">Amount</span>
             <span className="font-bold text-gray-900 text-base">
@@ -120,7 +136,7 @@ export default function DonorNiyyah() {
           {donation.pledgeOnly && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Type</span>
-              <span className="text-green-700 font-medium">Pledge</span>
+              <span className="font-medium text-islamic-dark">Pledge</span>
             </div>
           )}
           <div className="flex justify-between text-sm">
@@ -144,7 +160,8 @@ export default function DonorNiyyah() {
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50"
+            className="w-full text-white font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #2d6a4a, #1a3328)' }}
           >
             {ctaLabel()}
           </button>
@@ -156,6 +173,14 @@ export default function DonorNiyyah() {
             ← Go back
           </button>
         </div>
+
+        {/* Ornamental bottom */}
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <span className="h-px flex-1 bg-gold opacity-20" />
+          <span className="text-gold text-sm opacity-40">❖</span>
+          <span className="h-px flex-1 bg-gold opacity-20" />
+        </div>
+      </div>
       </div>
     </div>
   );

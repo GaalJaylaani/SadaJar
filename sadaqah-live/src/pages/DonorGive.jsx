@@ -1,3 +1,4 @@
+import CornerDecor from '../components/CornerDecor';
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
@@ -40,21 +41,31 @@ export default function DonorGive() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+    <div className="min-h-screen islamic-bg flex items-center justify-center p-4 py-10">
+      <div className="w-full max-w-md">
+
+        <div className="islamic-card p-8">
+          <CornerDecor color="#1a5c38" size={72} inset={4} />
         {/* Campaign header */}
         <div className="mb-6 text-center">
-          <div className="text-3xl mb-2">🤲</div>
-          <h1 className="text-xl font-bold text-green-900">{room.campaignName}</h1>
+          <p className="font-amiri text-xl text-gold mb-1" dir="rtl" lang="ar">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+          </p>
+          <div className="flex items-center justify-center gap-3 my-2">
+            <span className="h-px flex-1 bg-gold opacity-30" />
+            <span className="text-2xl">🤲</span>
+            <span className="h-px flex-1 bg-gold opacity-30" />
+          </div>
+          <h1 className="text-xl font-bold text-islamic-dark">{room.campaignName}</h1>
           {room.goalAmount > 0 && (
             <p className="text-gray-500 text-sm mt-1">
               ${room.totalRaised.toLocaleString()} raised of ${room.goalAmount.toLocaleString()} goal
             </p>
           )}
-          <div className="mt-3 w-full bg-gray-100 rounded-full h-2">
+          <div className="mt-3 w-full rounded-full h-2 overflow-hidden" style={{ background: '#d1e9dc' }}>
             <div
-              className="bg-green-700 rounded-full h-2 transition-all"
-              style={{ width: `${progress}%` }}
+              className="rounded-full h-2 transition-all"
+              style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #0f3d24, #1a5c38)' }}
             />
           </div>
         </div>
@@ -67,11 +78,12 @@ export default function DonorGive() {
               <button
                 key={preset}
                 onClick={() => { setAmount(String(preset)); setCustomAmount(''); }}
-                className={`py-3 rounded-xl font-semibold text-lg border-2 transition-colors ${
+                className="py-3 rounded-xl font-semibold text-lg border-2 transition-colors"
+                style={
                   amount === String(preset)
-                    ? 'bg-green-800 border-green-800 text-white'
-                    : 'bg-white border-gray-200 text-gray-800 hover:border-green-700'
-                }`}
+                    ? { background: '#1a3328', borderColor: '#1a3328', color: '#fff' }
+                    : { background: '#fff', borderColor: '#e5e7eb', color: '#1f2937' }
+                }
               >
                 ${preset}
               </button>
@@ -84,13 +96,13 @@ export default function DonorGive() {
               placeholder="Custom amount"
               value={customAmount}
               onChange={(e) => { setCustomAmount(e.target.value); setAmount(''); }}
-              className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 text-center text-lg font-semibold text-gray-800 focus:outline-none focus:border-green-700"
+              className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 text-center text-lg font-semibold text-gray-800 focus:outline-none focus:border-gold transition-colors"
             />
           )}
         </div>
 
         {/* Anonymity toggle */}
-        <div className="mb-4 bg-green-50 rounded-xl p-4">
+        <div className="mb-4 rounded-xl p-4" style={{ background: '#f0f9f4', border: '1px solid #a7d5bc' }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-gray-800 text-sm">Show my name on screen</p>
@@ -100,7 +112,7 @@ export default function DonorGive() {
               type="button"
               onClick={() => setShowName(!showName)}
               className={`relative w-12 h-6 rounded-full transition-colors focus:outline-none ${
-                showName ? 'bg-green-700' : 'bg-gray-300'
+                showName ? 'bg-islamic-dark' : 'bg-gray-300'
               }`}
             >
               <span
@@ -116,7 +128,7 @@ export default function DonorGive() {
               placeholder="Your name (e.g. Brother Ahmed)"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="mt-3 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gold"
               autoFocus
             />
           )}
@@ -128,7 +140,7 @@ export default function DonorGive() {
             type="checkbox"
             checked={pledgeOnly}
             onChange={(e) => setPledgeOnly(e.target.checked)}
-            className="w-4 h-4 mt-0.5 accent-green-700 flex-shrink-0"
+            className="w-4 h-4 mt-0.5 flex-shrink-0 accent-islamic-green"
           />
           <span className="text-sm text-gray-600 leading-snug">
             I'll pay later{' '}
@@ -139,10 +151,12 @@ export default function DonorGive() {
         <button
           onClick={handleContinue}
           disabled={!selectedAmount || Number(selectedAmount) <= 0}
-          className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-40"
+          className="w-full text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-40"
+          style={{ background: 'linear-gradient(135deg, #2d6a4a, #1a3328)' }}
         >
           Continue →
         </button>
+      </div>
       </div>
     </div>
   );

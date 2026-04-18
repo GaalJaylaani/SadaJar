@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { subscribeToRoom, subscribeToDonations } from '../firebase/firestore';
+import CornerDecor from '../components/CornerDecor';
 
 export default function HostDashboard() {
   const { roomId } = useParams();
@@ -18,8 +19,8 @@ export default function HostDashboard() {
 
   if (!room) {
     return (
-      <div className="min-h-screen bg-green-900 flex items-center justify-center">
-        <p className="text-white text-xl">Loading dashboard...</p>
+      <div className="min-h-screen islamic-bg-dark flex items-center justify-center">
+        <p className="text-white text-xl font-amiri">Loading dashboard...</p>
       </div>
     );
   }
@@ -32,20 +33,39 @@ export default function HostDashboard() {
     : Math.min((room.totalRaised / room.goalAmount) * 100, 100);
 
   return (
-    <div className="min-h-screen bg-green-900 text-white p-8 flex flex-col">
+    <div className="min-h-screen islamic-bg-dark text-white p-8 flex flex-col">
+      <CornerDecor fixed color="#c9a227" size={90} inset={14} />
+      {/* Top ayah strip */}
+      <div className="text-center mb-6">
+        <p className="font-amiri text-2xl" style={{ color: '#c9a227' }} dir="rtl" lang="ar">
+          وَمَا تُنفِقُوا مِنْ خَيْرٍ فَإِنَّ اللَّهَ بِهِ عَلِيمٌ
+        </p>
+        <p className="text-sm mt-1 italic" style={{ color: '#c9a227', opacity: 0.65 }}>
+          "Whatever good you give, Allah is All-Knowing of it." — Al-Baqarah 2:273
+        </p>
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <span className="h-px flex-1 opacity-20" style={{ background: '#c9a227' }} />
+          <span className="text-sm opacity-40" style={{ color: '#c9a227' }}>✦</span>
+          <span className="h-px flex-1 opacity-20" style={{ background: '#c9a227' }} />
+        </div>
+      </div>
+
       {/* Header row */}
       <div className="flex items-start justify-between mb-10">
         <div>
           <h1 className="text-4xl font-bold">{room.campaignName}</h1>
-          <p className="text-green-400 mt-1 text-lg">Live fundraising — give privately from your phone</p>
+          <p className="mt-1 text-lg" style={{ color: '#c9a227', opacity: 0.8 }}>
+            Live fundraising — give privately from your phone
+          </p>
         </div>
         <div className="text-right">
-          <p className="text-green-400 text-sm uppercase tracking-widest font-medium">Room Code</p>
+          <p className="text-sm uppercase tracking-widest font-medium" style={{ color: '#c9a227', opacity: 0.8 }}>Room Code</p>
           <p className="text-6xl font-bold tracking-widest mt-1 font-mono">{room.roomCode}</p>
-          <p className="text-green-400 text-sm mt-1">sadaqah.live/join</p>
+          <p className="text-sm mt-1" style={{ color: '#c9a227', opacity: 0.6 }}>sadaqah.live/join</p>
           <Link
             to={`/host/${roomId}/admin`}
-            className="inline-block mt-3 text-xs text-green-700 hover:text-green-400 border border-green-800 hover:border-green-600 px-3 py-1 rounded-lg transition"
+            className="inline-block mt-3 text-xs px-3 py-1 rounded-lg transition"
+            style={{ color: '#c9a227', border: '1px solid rgba(201,162,39,0.4)' }}
           >
             Host admin →
           </Link>
@@ -56,21 +76,21 @@ export default function HostDashboard() {
       <div className="text-center mb-8">
         {isHeadcount ? (
           <>
-            <p className="text-green-400 text-xl uppercase tracking-widest font-medium mb-2">Donors</p>
+            <p className="text-xl uppercase tracking-widest font-medium mb-2" style={{ color: '#c9a227' }}>Donors</p>
             <p className="text-9xl font-bold tracking-tight leading-none">
               {donorCount}
             </p>
-            <p className="text-green-400 text-3xl mt-3">
+            <p className="text-3xl mt-3" style={{ color: '#c9a227', opacity: 0.8 }}>
               of {room.goalHeadcount.toLocaleString()} goal
             </p>
           </>
         ) : (
           <>
-            <p className="text-green-400 text-xl uppercase tracking-widest font-medium mb-2">Total Raised</p>
+            <p className="text-xl uppercase tracking-widest font-medium mb-2" style={{ color: '#c9a227' }}>Total Raised</p>
             <p className="text-9xl font-bold tracking-tight leading-none">
               ${room.totalRaised.toLocaleString()}
             </p>
-            <p className="text-green-400 text-3xl mt-3">
+            <p className="text-3xl mt-3" style={{ color: '#c9a227', opacity: 0.8 }}>
               of ${room.goalAmount.toLocaleString()} goal
             </p>
           </>
@@ -78,27 +98,32 @@ export default function HostDashboard() {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full bg-green-800 rounded-full h-8 mb-10 overflow-hidden">
+      <div className="w-full rounded-full h-8 mb-10 overflow-hidden" style={{ background: 'rgba(201,162,39,0.15)' }}>
         <div
-          className="bg-white rounded-full h-8 transition-all duration-700 flex items-center justify-end pr-3"
-          style={{ width: `${progress}%` }}
+          className="rounded-full h-8 transition-all duration-700 flex items-center justify-end pr-3"
+          style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #9b7a0a, #c9a227, #f5e6b8)' }}
         >
           {progress > 8 && (
-            <span className="text-green-900 text-xs font-bold">{Math.round(progress)}%</span>
+            <span className="text-xs font-bold" style={{ color: '#0f3d24' }}>{Math.round(progress)}%</span>
           )}
         </div>
       </div>
 
       {/* Donations list */}
       <div className="flex-1">
-        <h2 className="text-green-400 text-lg uppercase tracking-widest font-medium mb-4">
-          {donorCount} {donorCount === 1 ? 'Gift' : 'Gifts'} received
-        </h2>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-sm opacity-50" style={{ color: '#c9a227' }}>❖</span>
+          <h2 className="text-lg uppercase tracking-widest font-medium" style={{ color: '#c9a227' }}>
+            {donorCount} {donorCount === 1 ? 'Gift' : 'Gifts'} received
+          </h2>
+          <span className="text-sm opacity-50" style={{ color: '#c9a227' }}>❖</span>
+        </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {donations.map((d) => (
             <div
               key={d.id}
-              className="flex items-center justify-between bg-green-800 rounded-2xl px-6 py-5"
+              className="flex items-center justify-between rounded-2xl px-6 py-5"
+              style={{ background: 'rgba(255,255,255,0.05)', borderLeft: '2px solid rgba(201,162,39,0.3)' }}
             >
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{d.isAnonymous ? '🌿' : '✨'}</span>
@@ -107,35 +132,29 @@ export default function HostDashboard() {
                     {d.isAnonymous ? 'Anonymous' : d.displayName}
                   </p>
                   {d.pledgeOnly && (
-                    <span className="text-xs text-green-400">pledge</span>
+                    <span className="text-xs" style={{ color: '#c9a227' }}>pledge</span>
                   )}
                 </div>
               </div>
               <div className="text-right">
-                {/* In headcount mode, never show amounts — just the name matters */}
                 {isHeadcount ? (
-                  <p className="text-green-500 text-sm italic">counted</p>
+                  <p className="text-sm italic opacity-50">counted</p>
                 ) : d.isAnonymous ? (
-                  <p className="text-green-500 text-sm italic">amount private</p>
+                  <p className="text-sm italic opacity-50">amount private</p>
                 ) : (
-                  <p className="text-2xl font-bold">${d.amount.toLocaleString()}</p>
+                  <p className="text-2xl font-bold" style={{ color: '#c9a227' }}>${d.amount.toLocaleString()}</p>
                 )}
               </div>
             </div>
           ))}
           {donations.length === 0 && (
-            <p className="text-green-500 col-span-2 text-center py-8">
+            <p className="col-span-2 text-center py-8 opacity-40">
               Waiting for donations... Share the room code above!
             </p>
           )}
         </div>
       </div>
 
-      <div className="mt-10 text-center">
-        <p className="text-green-700 text-sm">
-          🕌 Sadaqah Live — giving for the sake of Allah alone
-        </p>
-      </div>
     </div>
   );
 }

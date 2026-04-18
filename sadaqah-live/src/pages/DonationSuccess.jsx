@@ -1,3 +1,4 @@
+import CornerDecor from '../components/CornerDecor';
 import { useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { submitDonation } from '../firebase/firestore';
@@ -28,11 +29,35 @@ export default function DonationSuccess() {
   }, [roomId, amount, displayName, isAnonymous, pledgeOnly]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-8 py-12 w-full max-w-sm text-center">
-        <div className="text-6xl mb-6">🌿</div>
+    <div className="min-h-screen islamic-bg flex items-center justify-center p-4 py-10">
+      <div className="w-full max-w-sm">
 
-        <h1 className="text-2xl font-bold text-green-900 mb-3">Jazakallah Khayran</h1>
+        <div className="islamic-card px-8 py-10 text-center">
+          <CornerDecor color="#1a5c38" size={72} inset={4} />
+
+        {/* Ornamental top */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <span className="h-px flex-1 bg-gold opacity-30" />
+          <span className="text-gold text-xl">✦</span>
+          <span className="h-px flex-1 bg-gold opacity-30" />
+        </div>
+
+        {/* Arabic Jazakallah Khayran */}
+        <p
+          className="font-amiri text-3xl mb-1"
+          dir="rtl"
+          lang="ar"
+          style={{ color: '#1a5c38' }}
+        >
+          جَزَاكَ اللَّهُ خَيْرًا
+        </p>
+        <h1 className="text-xl font-bold text-islamic-green mb-1">Jazakallah Khayran</h1>
+
+        <div className="flex items-center justify-center gap-2 my-4">
+          <span className="h-px w-10 bg-islamic-green opacity-30" />
+          <span className="text-2xl">🌿</span>
+          <span className="h-px w-10 bg-islamic-green opacity-30" />
+        </div>
 
         <p className="text-gray-600 leading-relaxed mb-6">
           {pledgeOnly
@@ -41,8 +66,8 @@ export default function DonationSuccess() {
         </p>
 
         {amount > 0 && (
-          <div className="bg-green-50 rounded-2xl px-6 py-4 mb-6 space-y-1">
-            <p className="text-green-900 font-bold text-2xl">
+          <div className="rounded-2xl px-6 py-4 mb-6 space-y-1" style={{ background: '#f0f9f4', border: '1px solid #a7d5bc' }}>
+            <p className="font-bold text-2xl" style={{ color: '#1a5c38' }}>
               ${amount.toLocaleString()}
             </p>
             <p className="text-gray-500 text-sm">
@@ -54,17 +79,34 @@ export default function DonationSuccess() {
         )}
 
         {pledgeOnly && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-sm text-amber-800">
+          <div className="rounded-xl px-4 py-3 mb-6 text-sm" style={{ background: '#f0f9f4', border: '1px solid #a7d5bc', color: '#1a5c38' }}>
             You will receive a reminder to complete your payment — in shā' Allāh.
           </div>
         )}
 
         <button
           onClick={() => navigate('/join')}
-          className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors"
+          className="w-full text-white font-semibold py-3 rounded-xl transition-colors"
+          style={{ background: 'linear-gradient(135deg, #2d6a4a, #1a3328)' }}
         >
           Join another room →
         </button>
+
+        {/* Closing ayah */}
+        <div className="mt-6">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className="h-px flex-1 bg-gold opacity-20" />
+            <span className="text-gold text-xs opacity-50">❖</span>
+            <span className="h-px flex-1 bg-gold opacity-20" />
+          </div>
+          <p className="font-amiri text-sm text-gray-400 italic" dir="rtl" lang="ar">
+            إِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            "Indeed, Allah does not waste the reward of the doers of good." — 9:120
+          </p>
+        </div>
+      </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import CornerDecor from '../components/CornerDecor';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createRoom } from '../firebase/firestore';
@@ -44,12 +45,23 @@ export default function HostCreateCampaign() {
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="text-4xl mb-2">🕌</div>
-          <h1 className="text-2xl font-bold text-green-900">Sadaqah Live</h1>
-          <p className="text-gray-500 text-sm mt-1">Create a fundraising campaign</p>
+    <div className="min-h-screen islamic-bg flex items-center justify-center p-4 py-10">
+      <div className="w-full max-w-md">
+
+        <div className="islamic-card p-8">
+          <CornerDecor color="#1a5c38" size={72} inset={4} />
+
+        {/* Header */}
+        <div className="mb-6 text-center">
+          <p className="font-amiri text-xl text-gold mb-1" dir="rtl" lang="ar">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+          </p>
+          <div className="flex items-center justify-center gap-3 my-2">
+            <span className="h-px flex-1 bg-gold opacity-30" />
+            <span className="text-gold text-sm">✦</span>
+            <span className="h-px flex-1 bg-gold opacity-30" />
+          </div>
+          <p className="text-gray-500 text-sm">Create a fundraising campaign</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -63,7 +75,7 @@ export default function HostCreateCampaign() {
               placeholder="e.g. Masjid Renovation Fund"
               value={form.campaignName}
               onChange={set('campaignName')}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
             />
           </div>
 
@@ -78,8 +90,8 @@ export default function HostCreateCampaign() {
                 onClick={() => setForm({ ...form, goalType: 'amount' })}
                 className={`py-3 rounded-xl font-medium text-sm border-2 transition-colors ${
                   form.goalType === 'amount'
-                    ? 'bg-green-800 border-green-800 text-white'
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-green-700'
+                    ? 'bg-islamic-dark border-islamic-dark text-white'
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-gold'
                 }`}
               >
                 💰 Raise Money
@@ -89,8 +101,8 @@ export default function HostCreateCampaign() {
                 onClick={() => setForm({ ...form, goalType: 'headcount' })}
                 className={`py-3 rounded-xl font-medium text-sm border-2 transition-colors ${
                   form.goalType === 'headcount'
-                    ? 'bg-green-800 border-green-800 text-white'
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-green-700'
+                    ? 'bg-islamic-dark border-islamic-dark text-white'
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-gold'
                 }`}
               >
                 👥 Donor Count
@@ -110,7 +122,7 @@ export default function HostCreateCampaign() {
                 min="1"
                 value={form.goalAmount}
                 onChange={set('goalAmount')}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
           ) : (
@@ -124,7 +136,7 @@ export default function HostCreateCampaign() {
                 min="1"
                 value={form.goalHeadcount}
                 onChange={set('goalHeadcount')}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
               />
               <p className="text-xs text-gray-400 mt-1">
                 The dashboard will show how many people have donated
@@ -143,7 +155,7 @@ export default function HostCreateCampaign() {
               placeholder="What is this campaign for?"
               value={form.description}
               onChange={set('description')}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent resize-none"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent resize-none"
             />
           </div>
 
@@ -158,7 +170,7 @@ export default function HostCreateCampaign() {
               placeholder="https://masjid.org/donate"
               value={form.donationLink}
               onChange={set('donationLink')}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
             />
             <p className="text-xs text-gray-400 mt-1">
               Donors will be redirected here after confirming their intention
@@ -172,15 +184,22 @@ export default function HostCreateCampaign() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
+            className="w-full text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #2d6a4a, #1a3328)' }}
           >
             {loading ? 'Creating...' : 'Create Campaign →'}
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Donors join at sadaqah.live/join
-        </p>
+        <div className="mt-6 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className="h-px flex-1 bg-gold opacity-20" />
+            <span className="text-gold text-sm opacity-60">❖</span>
+            <span className="h-px flex-1 bg-gold opacity-20" />
+          </div>
+          <p className="text-xs text-gray-400">Donors join at sadaqah.live/join</p>
+        </div>
+        </div>
       </div>
     </div>
   );
