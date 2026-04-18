@@ -7,10 +7,7 @@
   node_bundler = "esbuild"
 
 [dev]
-  framework = "#auto"
-  targetPort = 5173
+  command = "vite"
+  targetPort = 8080
+  port = 8889
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

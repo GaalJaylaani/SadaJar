@@ -34,7 +34,7 @@ export default function HostDashboard() {
 
   return (
     <div className="min-h-screen islamic-bg-dark text-white p-8 flex flex-col">
-      <CornerDecor fixed color="#c9a227" size={90} inset={14} />
+      <CornerDecor isFixed color="#c9a227" size={90} inset={14} />
       {/* Top ayah strip */}
       <div className="text-center mb-6">
         <p className="font-amiri text-2xl" style={{ color: '#c9a227' }} dir="rtl" lang="ar">

@@ -52,8 +52,8 @@ function CornerSVG({ color, size }) {
  * @param {boolean} fixed  – position:fixed (full page) vs position:absolute (card)
  * @param {number}  inset  – px offset from edge
  */
-export default function CornerDecor({ color = '#c9a227', size = 80, fixed = false, inset = 0 }) {
-  const pos = fixed ? 'fixed' : 'absolute';
+export default function CornerDecor({ color = '#c9a227', size = 80, isFixed = false, inset = 0 }) {
+  const pos = isFixed ? 'fixed' : 'absolute';
   const base = { position: pos, pointerEvents: 'none', zIndex: 0 };
 
   return (

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "functions": "netlify functions:serve --port 9999",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
