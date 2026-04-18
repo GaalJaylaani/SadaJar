@@ -1,35 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { findRoomByCode } from '../firebase/firestore';
 
 export default function DonorJoinRoom() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const trimmed = code.trim().toUpperCase();
-    if (trimmed.length !== 6) {
-      setError('Please enter a 6-character room code.');
-      return;
-    }
-    setLoading(true);
-    setError('');
-    try {
-      const room = await findRoomByCode(trimmed);
-      if (!room) {
-        setError('Room not found or no longer active. Check your code and try again.');
-        return;
-      }
-      navigate(`/room/${room.id}/give`, { state: { room } });
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    navigate('/room/mock123/give');
   };
 
   return (
@@ -52,16 +30,11 @@ export default function DonorJoinRoom() {
             autoFocus
           />
 
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3 text-center">{error}</p>
-          )}
-
           <button
             type="submit"
-            disabled={loading || code.trim().length !== 6}
-            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
+            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors"
           >
-            {loading ? 'Looking up room...' : 'Join →'}
+            Join →
           </button>
         </form>
       </div>

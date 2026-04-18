@@ -1,30 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createRoom } from '../firebase/firestore';
 
 export default function HostCreateCampaign() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ campaignName: '', goalAmount: '', description: '' });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.campaignName || !form.goalAmount) {
       setError('Campaign name and goal are required.');
       return;
     }
-    setLoading(true);
-    setError('');
-    try {
-      const { roomId } = await createRoom(form);
-      navigate(`/host/${roomId}`);
-    } catch (err) {
-      setError('Failed to create campaign. Check your Firebase config.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    console.log('Campaign created:', form);
+    navigate('/host/mock123');
   };
 
   return (
@@ -56,7 +45,7 @@ export default function HostCreateCampaign() {
             </label>
             <input
               type="number"
-              placeholder="5000"
+              placeholder="10000"
               min="1"
               value={form.goalAmount}
               onChange={(e) => setForm({ ...form, goalAmount: e.target.value })}
@@ -66,7 +55,8 @@ export default function HostCreateCampaign() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-gray-400 font-normal">(optional)</span>
+              Description{' '}
+              <span className="text-gray-400 font-normal">(optional)</span>
             </label>
             <textarea
               rows={3}
@@ -83,10 +73,9 @@ export default function HostCreateCampaign() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
+            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors"
           >
-            {loading ? 'Creating...' : 'Create Campaign →'}
+            Create Campaign →
           </button>
         </form>
 
