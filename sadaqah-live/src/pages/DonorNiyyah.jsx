@@ -1,14 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { submitDonation } from '../firebase/firestore';
 
-const MOCK_DONATION = {
-  amount: 100,
-  displayName: 'Anonymous',
-  isAnonymous: true,
-  pledgeOnly: false,
-};
-
-const MOCK_ROOM = { campaignName: 'Masjid Renovation Fund' };
+const MOCK_DONATION = { amount: 100, displayName: 'Anonymous', isAnonymous: true, pledgeOnly: false };
+const MOCK_ROOM = { campaignName: 'Campaign' };
 
 export default function DonorNiyyah() {
   const { roomId } = useParams();
@@ -19,11 +14,20 @@ export default function DonorNiyyah() {
   const room = state?.room ?? MOCK_ROOM;
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleConfirm = async () => {
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    navigate(`/room/${roomId}/success`, { state: { room, donation } });
+    setError('');
+    try {
+      await new Promise((r) => setTimeout(r, 1500));
+      await submitDonation(roomId, donation);
+      navigate(`/room/${roomId}/success`, { state: { room, donation } });
+    } catch (err) {
+      console.error(err);
+      setError('Something went wrong. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,6 +80,10 @@ export default function DonorNiyyah() {
             <span className="font-medium text-gray-900">{room.campaignName}</span>
           </div>
         </div>
+
+        {error && (
+          <p className="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3 mb-4">{error}</p>
+        )}
 
         {/* Buttons */}
         <div className="space-y-3">

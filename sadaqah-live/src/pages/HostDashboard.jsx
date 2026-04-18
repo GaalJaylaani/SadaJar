@@ -1,20 +1,29 @@
-const MOCK_ROOM = {
-  campaignName: 'Masjid Renovation Fund',
-  goalAmount: 10000,
-  totalRaised: 4250,
-  roomCode: 'MOS123',
-};
-
-const MOCK_DONATIONS = [
-  { id: '4', displayName: 'Sister Fatima', amount: 50,  isAnonymous: false, pledgeOnly: false },
-  { id: '3', displayName: 'Anonymous',     amount: 500, isAnonymous: true,  pledgeOnly: false },
-  { id: '2', displayName: 'Brother Ahmed', amount: 250, isAnonymous: false, pledgeOnly: false },
-  { id: '1', displayName: 'Anonymous',     amount: 100, isAnonymous: true,  pledgeOnly: true  },
-];
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { subscribeToRoom, subscribeToDonations } from '../firebase/firestore';
 
 export default function HostDashboard() {
-  const room = MOCK_ROOM;
-  const donations = MOCK_DONATIONS;
+  const { roomId } = useParams();
+  const [room, setRoom] = useState(null);
+  const [donations, setDonations] = useState([]);
+
+  useEffect(() => {
+    const unsubRoom = subscribeToRoom(roomId, setRoom);
+    const unsubDonations = subscribeToDonations(roomId, setDonations);
+    return () => {
+      unsubRoom();
+      unsubDonations();
+    };
+  }, [roomId]);
+
+  if (!room) {
+    return (
+      <div className="min-h-screen bg-green-900 flex items-center justify-center">
+        <p className="text-white text-xl">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   const progress = Math.min((room.totalRaised / room.goalAmount) * 100, 100);
 
   return (
@@ -49,7 +58,9 @@ export default function HostDashboard() {
           className="bg-white rounded-full h-8 transition-all duration-700 flex items-center justify-end pr-3"
           style={{ width: `${progress}%` }}
         >
-          <span className="text-green-900 text-xs font-bold">{Math.round(progress)}%</span>
+          {progress > 8 && (
+            <span className="text-green-900 text-xs font-bold">{Math.round(progress)}%</span>
+          )}
         </div>
       </div>
 
@@ -84,6 +95,11 @@ export default function HostDashboard() {
               </div>
             </div>
           ))}
+          {donations.length === 0 && (
+            <p className="text-green-500 col-span-2 text-center py-8">
+              Waiting for donations... Share the room code above!
+            </p>
+          )}
         </div>
       </div>
 

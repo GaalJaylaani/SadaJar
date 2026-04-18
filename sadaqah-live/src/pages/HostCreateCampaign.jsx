@@ -1,19 +1,29 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createRoom } from '../firebase/firestore';
 
 export default function HostCreateCampaign() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ campaignName: '', goalAmount: '', description: '' });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.campaignName || !form.goalAmount) {
       setError('Campaign name and goal are required.');
       return;
     }
-    console.log('Campaign created:', form);
-    navigate('/host/mock123');
+    setLoading(true);
+    setError('');
+    try {
+      const { roomId } = await createRoom(form);
+      navigate(`/host/${roomId}`);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to create campaign. Check your Firebase config and try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -73,9 +83,10 @@ export default function HostCreateCampaign() {
 
           <button
             type="submit"
-            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors"
+            disabled={loading}
+            className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50"
           >
-            Create Campaign →
+            {loading ? 'Creating...' : 'Create Campaign →'}
           </button>
         </form>
 

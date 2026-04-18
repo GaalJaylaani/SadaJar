@@ -1,17 +1,14 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const PRESET_AMOUNTS = [25, 50, 100, 250, 500];
 
-const MOCK_ROOM = {
-  campaignName: 'Masjid Renovation Fund',
-  goalAmount: 10000,
-  totalRaised: 4250,
-};
-
 export default function DonorGive() {
   const { roomId } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
+
+  const room = state?.room ?? { campaignName: 'Campaign', goalAmount: 0, totalRaised: 0 };
 
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
@@ -25,7 +22,7 @@ export default function DonorGive() {
     if (!selectedAmount || Number(selectedAmount) <= 0) return;
     navigate(`/room/${roomId}/niyyah`, {
       state: {
-        room: MOCK_ROOM,
+        room,
         donation: {
           amount: Number(selectedAmount),
           displayName: showName ? (displayName || 'Friend') : 'Anonymous',
@@ -36,21 +33,26 @@ export default function DonorGive() {
     });
   };
 
+  const progress = room.goalAmount > 0
+    ? Math.min((room.totalRaised / room.goalAmount) * 100, 100)
+    : 0;
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
         {/* Campaign header */}
         <div className="mb-6 text-center">
           <div className="text-3xl mb-2">🤲</div>
-          <h1 className="text-xl font-bold text-green-900">{MOCK_ROOM.campaignName}</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            ${MOCK_ROOM.totalRaised.toLocaleString()} raised of ${MOCK_ROOM.goalAmount.toLocaleString()} goal
-          </p>
-          {/* Mini progress bar */}
+          <h1 className="text-xl font-bold text-green-900">{room.campaignName}</h1>
+          {room.goalAmount > 0 && (
+            <p className="text-gray-500 text-sm mt-1">
+              ${room.totalRaised.toLocaleString()} raised of ${room.goalAmount.toLocaleString()} goal
+            </p>
+          )}
           <div className="mt-3 w-full bg-gray-100 rounded-full h-2">
             <div
-              className="bg-green-700 rounded-full h-2"
-              style={{ width: `${Math.min((MOCK_ROOM.totalRaised / MOCK_ROOM.goalAmount) * 100, 100)}%` }}
+              className="bg-green-700 rounded-full h-2 transition-all"
+              style={{ width: `${progress}%` }}
             />
           </div>
         </div>
