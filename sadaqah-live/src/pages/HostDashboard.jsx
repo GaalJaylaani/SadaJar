@@ -24,7 +24,12 @@ export default function HostDashboard() {
     );
   }
 
-  const progress = Math.min((room.totalRaised / room.goalAmount) * 100, 100);
+  const isHeadcount = room.goalType === 'headcount';
+  const donorCount = donations.length;
+
+  const progress = isHeadcount
+    ? Math.min((donorCount / room.goalHeadcount) * 100, 100)
+    : Math.min((room.totalRaised / room.goalAmount) * 100, 100);
 
   return (
     <div className="min-h-screen bg-green-900 text-white p-8 flex flex-col">
@@ -41,15 +46,29 @@ export default function HostDashboard() {
         </div>
       </div>
 
-      {/* Total raised — huge, projector-readable */}
+      {/* Main stat — huge, projector-readable */}
       <div className="text-center mb-8">
-        <p className="text-green-400 text-xl uppercase tracking-widest font-medium mb-2">Total Raised</p>
-        <p className="text-9xl font-bold tracking-tight leading-none">
-          ${room.totalRaised.toLocaleString()}
-        </p>
-        <p className="text-green-400 text-3xl mt-3">
-          of ${room.goalAmount.toLocaleString()} goal
-        </p>
+        {isHeadcount ? (
+          <>
+            <p className="text-green-400 text-xl uppercase tracking-widest font-medium mb-2">Donors</p>
+            <p className="text-9xl font-bold tracking-tight leading-none">
+              {donorCount}
+            </p>
+            <p className="text-green-400 text-3xl mt-3">
+              of {room.goalHeadcount.toLocaleString()} goal
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-green-400 text-xl uppercase tracking-widest font-medium mb-2">Total Raised</p>
+            <p className="text-9xl font-bold tracking-tight leading-none">
+              ${room.totalRaised.toLocaleString()}
+            </p>
+            <p className="text-green-400 text-3xl mt-3">
+              of ${room.goalAmount.toLocaleString()} goal
+            </p>
+          </>
+        )}
       </div>
 
       {/* Progress bar */}
@@ -67,7 +86,7 @@ export default function HostDashboard() {
       {/* Donations list */}
       <div className="flex-1">
         <h2 className="text-green-400 text-lg uppercase tracking-widest font-medium mb-4">
-          {donations.length} {donations.length === 1 ? 'Gift' : 'Gifts'} received
+          {donorCount} {donorCount === 1 ? 'Gift' : 'Gifts'} received
         </h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {donations.map((d) => (
@@ -87,7 +106,10 @@ export default function HostDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                {d.isAnonymous ? (
+                {/* In headcount mode, never show amounts — just the name matters */}
+                {isHeadcount ? (
+                  <p className="text-green-500 text-sm italic">counted</p>
+                ) : d.isAnonymous ? (
                   <p className="text-green-500 text-sm italic">amount private</p>
                 ) : (
                   <p className="text-2xl font-bold">${d.amount.toLocaleString()}</p>

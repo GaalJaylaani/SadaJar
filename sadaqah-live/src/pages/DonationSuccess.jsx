@@ -1,11 +1,31 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-
-const MOCK_DONATION = { amount: 100, isAnonymous: true, pledgeOnly: false };
+import { useEffect, useRef } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { submitDonation } from '../firebase/firestore';
 
 export default function DonationSuccess() {
+  const { roomId } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
-  const donation = state?.donation ?? MOCK_DONATION;
+  const submitted = useRef(false);
+
+  const params = new URLSearchParams(window.location.search);
+
+  // Stripe redirect passes data as URL params; pledge flow passes via location state
+  const amount = Number(params.get('amount')) || state?.donation?.amount || 0;
+  const displayName = params.get('displayName') || state?.donation?.displayName || 'Anonymous';
+  const isAnonymous = params.has('isAnonymous')
+    ? params.get('isAnonymous') === 'true'
+    : state?.donation?.isAnonymous ?? true;
+  const pledgeOnly = params.has('pledgeOnly')
+    ? params.get('pledgeOnly') === 'true'
+    : state?.donation?.pledgeOnly ?? false;
+
+  useEffect(() => {
+    // Only write to Firestore for Stripe flow (URL params present) — pledge flow already wrote in PledgeContact
+    if (!params.get('amount') || !amount || !roomId || submitted.current) return;
+    submitted.current = true;
+    submitDonation(roomId, { amount, displayName, isAnonymous, pledgeOnly }).catch(console.error);
+  }, [roomId, amount, displayName, isAnonymous, pledgeOnly]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -15,26 +35,27 @@ export default function DonationSuccess() {
         <h1 className="text-2xl font-bold text-green-900 mb-3">Jazakallah Khayran</h1>
 
         <p className="text-gray-600 leading-relaxed mb-6">
-          Your donation has been recorded. May Allah accept it from you and multiply it
-          manifold.
+          {pledgeOnly
+            ? 'Your pledge has been recorded. May Allah make it easy for you to fulfil it.'
+            : 'Your donation has been recorded. May Allah accept it from you and multiply it manifold.'}
         </p>
 
-        {donation && (
+        {amount > 0 && (
           <div className="bg-green-50 rounded-2xl px-6 py-4 mb-6 space-y-1">
             <p className="text-green-900 font-bold text-2xl">
-              ${donation.amount.toLocaleString()}
+              ${amount.toLocaleString()}
             </p>
             <p className="text-gray-500 text-sm">
-              {donation.isAnonymous
+              {isAnonymous
                 ? 'Given anonymously — between you and Allah.'
-                : `Given as ${donation.displayName}.`}
+                : `Given as ${displayName}.`}
             </p>
           </div>
         )}
 
-        {donation?.pledgeOnly && (
+        {pledgeOnly && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 text-sm text-amber-800">
-            You made a pledge. You will receive a reminder to complete your payment — in shā' Allāh.
+            You will receive a reminder to complete your payment — in shā' Allāh.
           </div>
         )}
 

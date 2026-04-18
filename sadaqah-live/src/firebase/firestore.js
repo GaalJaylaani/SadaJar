@@ -13,13 +13,16 @@ import {
 } from 'firebase/firestore';
 import { db, ensureAnonymousAuth } from './config';
 
-export async function createRoom({ campaignName, goalAmount, description }) {
+export async function createRoom({ campaignName, goalType, goalAmount, goalHeadcount, description, donationLink }) {
   const user = await ensureAnonymousAuth();
   const roomRef = await addDoc(collection(db, 'rooms'), {
     hostId: user.uid,
     campaignName,
-    goalAmount: Number(goalAmount),
+    goalType: goalType || 'amount',
+    goalAmount: goalType === 'headcount' ? 0 : Number(goalAmount),
+    goalHeadcount: goalType === 'headcount' ? Number(goalHeadcount) : 0,
     description: description || '',
+    donationLink: donationLink || '',
     totalRaised: 0,
     isActive: true,
     createdAt: serverTimestamp(),
@@ -59,7 +62,7 @@ export function subscribeToDonations(roomId, callback) {
   });
 }
 
-export async function submitDonation(roomId, { amount, displayName, isAnonymous, pledgeOnly }) {
+export async function submitDonation(roomId, { amount, displayName, isAnonymous, pledgeOnly, email, phone }) {
   await ensureAnonymousAuth();
   const donationRef = await addDoc(collection(db, 'rooms', roomId, 'donations'), {
     displayName: isAnonymous ? 'Anonymous' : displayName || 'Anonymous',
@@ -67,6 +70,8 @@ export async function submitDonation(roomId, { amount, displayName, isAnonymous,
     isAnonymous,
     pledgeOnly: pledgeOnly || false,
     createdAt: serverTimestamp(),
+    ...(email ? { email } : {}),
+    ...(phone ? { phone } : {}),
   });
 
   if (!pledgeOnly) {

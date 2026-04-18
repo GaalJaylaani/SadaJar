@@ -17,17 +17,65 @@ export default function DonorNiyyah() {
   const [error, setError] = useState('');
 
   const handleConfirm = async () => {
+    // Pledge — go collect contact info, no payment
+    if (donation.pledgeOnly) {
+      navigate(`/room/${roomId}/pledge-contact`, { state: { room, donation } });
+      return;
+    }
+
+    // External donation link — record intent in Firestore then redirect
+    if (room.donationLink) {
+      setLoading(true);
+      try {
+        await submitDonation(roomId, donation);
+      } catch (err) {
+        console.error(err);
+      }
+      window.location.href = room.donationLink;
+      return;
+    }
+
+    // Stripe checkout
     setLoading(true);
     setError('');
     try {
-      await new Promise((r) => setTimeout(r, 1500));
-      await submitDonation(roomId, donation);
-      navigate(`/room/${roomId}/success`, { state: { room, donation } });
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: donation.amount,
+          roomId,
+          displayName: donation.displayName,
+          isAnonymous: donation.isAnonymous,
+          pledgeOnly: donation.pledgeOnly,
+          campaignName: room.campaignName,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to create checkout session');
+
+      const { url } = await res.json();
+      window.location.href = url;
     } catch (err) {
       console.error(err);
-      setError('Something went wrong. Please try again.');
+      setError('Payment setup failed. Please try again.');
       setLoading(false);
     }
+  };
+
+  const ctaLabel = () => {
+    if (donation.pledgeOnly) return 'Confirm Pledge →';
+    if (loading) return (
+      <span className="flex items-center justify-center gap-2">
+        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+        Redirecting…
+      </span>
+    );
+    if (room.donationLink) return 'Confirm & Donate →';
+    return 'Confirm & Pay';
   };
 
   return (
@@ -81,6 +129,12 @@ export default function DonorNiyyah() {
           </div>
         </div>
 
+        {room.donationLink && !donation.pledgeOnly && (
+          <p className="text-xs text-gray-400 mb-4">
+            You'll be redirected to the masjid's donation page to complete your payment.
+          </p>
+        )}
+
         {error && (
           <p className="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3 mb-4">{error}</p>
         )}
@@ -92,17 +146,7 @@ export default function DonorNiyyah() {
             disabled={loading}
             className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3.5 rounded-xl transition-colors disabled:opacity-50"
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
-                Processing…
-              </span>
-            ) : (
-              'Confirm & Pay'
-            )}
+            {ctaLabel()}
           </button>
           <button
             onClick={() => navigate(-1)}
