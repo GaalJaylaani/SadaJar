@@ -62,6 +62,30 @@ export function subscribeToDonations(roomId, callback) {
   });
 }
 
+export async function endRoom(roomId) {
+  await updateDoc(doc(db, 'rooms', roomId), { isActive: false });
+}
+
+export async function updateRoomGoal(roomId, { goalType, goalAmount, goalHeadcount }) {
+  await updateDoc(doc(db, 'rooms', roomId), {
+    goalType,
+    goalAmount: goalType === 'headcount' ? 0 : Number(goalAmount),
+    goalHeadcount: goalType === 'headcount' ? Number(goalHeadcount) : 0,
+  });
+}
+
+export async function updateRoomName(roomId, campaignName) {
+  await updateDoc(doc(db, 'rooms', roomId), { campaignName });
+}
+
+export async function updateRoomDonationLink(roomId, donationLink) {
+  await updateDoc(doc(db, 'rooms', roomId), { donationLink });
+}
+
+export async function updateRoomPresets(roomId, { donationPresets, allowCustomAmount }) {
+  await updateDoc(doc(db, 'rooms', roomId), { donationPresets, allowCustomAmount });
+}
+
 export async function submitDonation(roomId, { amount, displayName, isAnonymous, pledgeOnly, email, phone }) {
   await ensureAnonymousAuth();
   const donationRef = await addDoc(collection(db, 'rooms', roomId, 'donations'), {

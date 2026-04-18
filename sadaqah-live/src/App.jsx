@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HostCreateCampaign from './pages/HostCreateCampaign';
 import HostDashboard from './pages/HostDashboard';
+import HostAdmin from './pages/HostAdmin';
 import DonorJoinRoom from './pages/DonorJoinRoom';
 import DonorGive from './pages/DonorGive';
 import DonorNiyyah from './pages/DonorNiyyah';
@@ -13,6 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HostCreateCampaign />} />
         <Route path="/host/:roomId" element={<HostDashboard />} />
+        <Route path="/host/:roomId/admin" element={<HostAdmin />} />
         <Route path="/join" element={<DonorJoinRoom />} />
         <Route path="/room/:roomId/give" element={<DonorGive />} />
         <Route path="/room/:roomId/niyyah" element={<DonorNiyyah />} />

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
-const PRESET_AMOUNTS = [25, 50, 100, 250, 500];
+const DEFAULT_PRESET_AMOUNTS = [25, 50, 100, 250, 500];
 
 export default function DonorGive() {
   const { roomId } = useParams();
@@ -9,6 +9,8 @@ export default function DonorGive() {
   const navigate = useNavigate();
 
   const room = state?.room ?? { campaignName: 'Campaign', goalAmount: 0, totalRaised: 0 };
+  const presets = room.donationPresets ?? DEFAULT_PRESET_AMOUNTS;
+  const allowCustom = room.allowCustomAmount !== false;
 
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
@@ -61,7 +63,7 @@ export default function DonorGive() {
         <div className="mb-5">
           <p className="text-sm font-medium text-gray-700 mb-3">Choose an amount</p>
           <div className="grid grid-cols-3 gap-2 mb-2">
-            {PRESET_AMOUNTS.map((preset) => (
+            {presets.map((preset) => (
               <button
                 key={preset}
                 onClick={() => { setAmount(String(preset)); setCustomAmount(''); }}
@@ -75,14 +77,16 @@ export default function DonorGive() {
               </button>
             ))}
           </div>
-          <input
-            type="number"
-            min="1"
-            placeholder="Custom amount"
-            value={customAmount}
-            onChange={(e) => { setCustomAmount(e.target.value); setAmount(''); }}
-            className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 text-center text-lg font-semibold text-gray-800 focus:outline-none focus:border-green-700"
-          />
+          {allowCustom && (
+            <input
+              type="number"
+              min="1"
+              placeholder="Custom amount"
+              value={customAmount}
+              onChange={(e) => { setCustomAmount(e.target.value); setAmount(''); }}
+              className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 text-center text-lg font-semibold text-gray-800 focus:outline-none focus:border-green-700"
+            />
+          )}
         </div>
 
         {/* Anonymity toggle */}

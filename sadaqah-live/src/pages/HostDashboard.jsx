@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { subscribeToRoom, subscribeToDonations } from '../firebase/firestore';
 
 export default function HostDashboard() {
@@ -43,6 +43,12 @@ export default function HostDashboard() {
           <p className="text-green-400 text-sm uppercase tracking-widest font-medium">Room Code</p>
           <p className="text-6xl font-bold tracking-widest mt-1 font-mono">{room.roomCode}</p>
           <p className="text-green-400 text-sm mt-1">sadaqah.live/join</p>
+          <Link
+            to={`/host/${roomId}/admin`}
+            className="inline-block mt-3 text-xs text-green-700 hover:text-green-400 border border-green-800 hover:border-green-600 px-3 py-1 rounded-lg transition"
+          >
+            Host admin →
+          </Link>
         </div>
       </div>
 
